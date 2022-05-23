@@ -335,7 +335,6 @@ void Admin::readdata() {
 	}
 	
 }
-
 void Admin::options() {
 
 
@@ -343,7 +342,7 @@ void Admin::options() {
 	cout << "2:To update a new \n";
 	cout << "3:To delete data a new \n";
 	cout << "4:To read data a new \n";
-	cout << "5:To exit \n";
+	cout << "5:To logout \n";
 	cout << "enter your option :\n";
 	cin >> option;
 	switch (option)
@@ -361,7 +360,8 @@ void Admin::options() {
 		readdata();
 		break;
 	case 5:
-		exit(0);
+		system("cls");
+		re.intialization();
 		break;
 	default:
 		cout << "invalid option: \n";
@@ -375,11 +375,13 @@ void Admin::Choice()
 	cout << "If you want to choose another choice press --> 7 or 8 to log out" << endl;
 	cin >> option;
 	if (option == 7) {
-		Choice();
+		options();
+		system("cls");
 	}
 	else if (option == 8)
 	{
 		re.intialization();
+		system("cls");
 	}
 
 }
