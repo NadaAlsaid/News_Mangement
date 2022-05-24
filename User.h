@@ -21,7 +21,7 @@ class User
 	unordered_map<string, vector<string> >  comments;
 	unordered_map<int, vector<Details>> specificNews;
 	unordered_map<string, vector<string>> msam;
-	//map<string,map<string,vector<string> > m;
+	
 public:
 	string tit;
 	string newsnumber;
@@ -37,7 +37,6 @@ public:
 	void Display_Latest_News();
 	void Show();
 	void Spam();
-	bool checkspam(string);
 	void OptionSpam();
 	void DisplayComment();
 	void op();
