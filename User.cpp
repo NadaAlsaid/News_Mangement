@@ -44,6 +44,7 @@ void User::login()
 	input.close();
 	comments = news.ReadComment();
 	specificNews = news.ReadCatogNews();
+	mspam = vspam();
 	if (count == 1)
 	{
 		cout << "\t\t\t\t\t # Your Login is successful #" << endl;
@@ -284,7 +285,7 @@ void User::RateAll()
 		}
 		else
 		{
-			cout << "you can’t rate more than 5 strars" << endl;
+			cout << "you canâ€™t rate more than 5 strars" << endl;
 			OptionRateAll();
 		}
 		
@@ -343,18 +344,21 @@ void User::op() {
 	else if (choose == "3")
 	{
 		Spam();
+		mspam = vspam();
 		comments = news.ReadComment();
 		specificNews = news.ReadCatogNews();
 	}
 	else if (choose == "4")
 	{
 		system("cls");
+		mspam = vspam();
 		Display_Latest_News();
 
 	}
 	else if (choose == "5")
 	{
 		system("cls");
+		mspam = vspam();
 		Show();
 	}
 	else if (choose == "6")
@@ -391,11 +395,11 @@ void User::Display_Latest_News()
 		}
 
 	}
-	cout << "                    ******* THE NEWS ******* \n";
+	cout << "                                  ******* THE NEWS ******* \n";
 	for (int i = 0; i < v.size(); i++)
 	{
 
-		cout << "                                  " << v[i].Title << endl;
+		cout << "                                      " << v[i].Title << endl;
 		cout << "Date : " << v[i].Date << endl;
 		cout << "   " << v[i].Discrepition << endl;
 		cout << "Writen by :" << v[i].Writer << endl;
@@ -403,14 +407,14 @@ void User::Display_Latest_News()
 		cout << "The number of spam :" << v[i].spam << endl;
 		if (comments.find(v[i].Title) != comments.end()) {
 			vector<string> comment = comments.at(v[i].Title);
-			if (comment[0] != "00") {
+			//if (comment[0] != "00") {
 				for (int j = 0; j < comment.size(); j += 2) {
 					if (j == 0)
 						cout << endl;
 					cout << "*********************************************** \n";
 					cout << comment[j] << endl << comment[j + 1] << endl;
 				}
-			}
+			//}
 			cout << endl;
 		}
 	}
@@ -430,38 +434,47 @@ void User::Show()
 	if (catoType < 7 && catoType>0) {
 		if (specificNews.find(catoType) != specificNews.end()) {
 			vector<Details> v = specificNews.at(catoType);
-			cout << "                    ******* THE NEWS ******* \n";
+			vector<string> d;
+			if (mspam.find(user) != mspam.end()) {
+				 d = mspam.at(user);
+			}
+			cout << "                                  ******* THE NEWS ******* \n";
 			for (int j = 0; j < v.size(); j++)
 			{
-				
-				cout << "                                  " << v[j].Title << endl;
-				cout << "Date : " << v[j].Date << endl;
-				cout << "   " << v[j].Discrepition << endl;
-				cout << "Date : " << v[j].Date << endl;
-				cout << "Rate :" << v[j].string_rate << endl;
-				cout << "The number of spam :" << v[j].spam << endl;
+				if ( find(d.begin(), d.end(), v[j].Title) != d.end()) {
+					continue;
+				}
+				else
+				{
+					cout << "                                     " << v[j].Title << endl;
+					cout << "Date : " << v[j].Writer << endl;
+					cout << "   " << v[j].Discrepition << endl;
+					cout << "Date : " << v[j].Date << endl;
+					cout << "Rate :" << v[j].string_rate << endl;
+					cout << "The number of spam :" << v[j].spam << endl;
 
-				if (comments.find(v[j].Title) != comments.end()) {
-					vector<string> comment = comments.at(v[j].Title);
-					//if (comment[0] != "00") {
+					if (comments.find(v[j].Title) != comments.end()) {
+						vector<string> comment = comments.at(v[j].Title);
+						//if (comment[0] != "00") {
 						for (int z = 0; z < comment.size(); z += 2) {
 							if (z == 0)
 								cout << endl;
 							cout << "*********************************************** \n";
 							cout << comment[z] << endl << comment[z + 1] << endl;
 						}
-					//}
+						//}
 
+					}
+					cout << endl;
 				}
-				cout << endl;
 			}
 			op();
 		}
-		else {
-			cout << "This category hasn't news yet" << endl;
-			op();
+			else {
+				cout << "This category hasn't news yet" << endl;
+				op();
+			}
 		}
-	}
 	else {
 		cout << "Wrong choose" << endl;
 		op();
@@ -506,7 +519,7 @@ bool User::checkspam(string title) {
 void User::Spam()
 {
 	cout << "please enter title " << endl;
-	cin >> tit;
+	getline(cin >> ws ,tit);
 	bool isSpamed = checkspam(tit);
 	bool isFound = false;
 	ifstream f1("spam.txt", ios::app);
@@ -545,7 +558,6 @@ void User::Spam()
 		rename("tempfile.txt", "spam.txt");
 		cout << "Data is spammed .\n";
 		OptionSpam();
-		op();
 
 	}
 	else
@@ -561,11 +573,11 @@ void User::OptionSpam()
 	cout << endl;
 	cout << "Do you spam another news ? " << endl;
 	cout << "Y/N" << endl;
-	char option;
-	cin >> option;
-	if (option == 'y' || option == 'Y')
+	string option;
+	getline(cin >> ws, option) ;
+	if (option == "y" || option == "Y")
 		Spam();
-	else if (option == 'n' || option == 'N')
+	else if (option == "n" || option == "N")
 	{
 		op();
 		return;
@@ -574,4 +586,28 @@ void User::OptionSpam()
 		cout << "       Enter character Y or N       " << endl;
 		OptionSpam();
 	}
+}
+
+unordered_map<string, vector<string>> User::vspam()
+{
+	fstream input;
+	input.open("spam.txt", ios::app);
+	assert(!input.fail());
+	spamDetails spamdetails;
+	vector<string> d;
+	unordered_map<string, vector<string>> map_s;
+	while (getline(input, spamdetails.use)) {
+		while (getline(input, spamdetails.title))
+		{
+
+
+			if (spamdetails.title != "1")
+				d.push_back(spamdetails.title);
+			else
+				break;
+		}
+		map_s.insert(make_pair(spamdetails.use, d));
+		d.clear();
+	}
+	return map_s;
 }
