@@ -3,6 +3,7 @@
 #include<fstream>
 #include<string>
 #include <unordered_map>
+#include <map>
 
 using namespace std;
 
@@ -267,31 +268,40 @@ void User::RateAll()
 	getline(cin >> ws, tit);
 
 	bool flage = checkRateAll(tit);
-	if (flage)
-	{
-		cout << "Sorry,You cannot rate again" << endl;
-		OptionRateAll();
-
-	}
-	else
-	{
-		cout << "rate" << endl;
-		//getline(cin, rate);
-		cin >> rate;
-		if (rate > 0 && rate <= 5)
+	if (news.ReadCertainNews(tit)) {
+		if (flage)
 		{
-			news.ChangeRate(tit, rate);
-			ofstream input("rateAll.txt", ios::app);
-			input << user << endl << tit << endl << to_string(rate) << endl;
+			cout << "Sorry,You cannot rate again" << endl;
+			OptionRateAll();
+
+
 		}
 		else
 		{
-			cout << "you can’t rate more than 5 strars" << endl;
+			cout << "rate" << endl;
+			//getline(cin, rate);
+			cin >> rate;
+			if (rate > 0 && rate <= 5)
+			{
+				news.ChangeRate(tit, rate);
+				ofstream input("rateAll.txt", ios::app);
+				input << user << endl << tit << endl << to_string(rate) << endl;
+			}
+			else
+			{
+				cout << "you can’t rate more than 5 strars" << endl;
+				OptionRateAll();
+			}
+
 			OptionRateAll();
+			system("cls");
 		}
-		
+	}
+	else {
+		cout << "Sorry,The title is wrong" << endl;
+		cout << "Please Enter right title " << endl;
 		OptionRateAll();
-		system("cls");
+		return;
 	}
 }
 
@@ -301,7 +311,7 @@ void User::OptionRateAll()
 	cout << "Do you rate on another news ? " << endl;
 	cout << "Y/N" << endl;
 	string option;
-	getline(cin >> ws , option);
+	cin >>option;
 	if (option == "y" || option == "Y")
 		RateAll();
 	else if (option == "n" || option == "N")
@@ -312,6 +322,7 @@ void User::OptionRateAll()
 	else {
 		cout << "       Enter character Y or N       " << endl;
 		OptionRateAll();
+		return;
 	}
 }
 
@@ -359,6 +370,8 @@ void User::op() {
 	else if (choose == "5")
 	{
 		system("cls");
+		comments = news.ReadComment();
+		specificNews = news.ReadCatogNews();
 		msam = pam();
 		Show();
 	}
@@ -380,14 +393,13 @@ void User::Display_Latest_News()
 	News news;
 	vector<Details> v = news.ReadNews();
 	Details s;
-
-
+	map<string, vector<Details>> displayNews;
+	vector<Details> displaynews;
 	for (int i = 0; i < v.size(); i++)
 	{
 		for (int j = i + 1; j < v.size(); j++)
 		{
-			if ((v[i].string_rate < v[j].string_rate) && (v[i].Date > v[j].Date))
-			{
+			if (v[i].Date  < v[j].Date) {
 				s = v[i];
 				v[i] = v[j];
 				v[j] = s;
@@ -396,24 +408,68 @@ void User::Display_Latest_News()
 		}
 
 	}
-	vector<string> d;
-	if (msam.find(user) != msam.end()) {
-		d = msam.at(user);
-	}
-	cout << "                                  ******* THE NEWS ******* \n";
+
 	for (int i = 0; i < v.size(); i++)
 	{
-		if (d.size() != 0 && find(d.begin(), d.end(), v[i].Title) != d.end()) {
+		if (displayNews.find(v[i].string_rate) != displayNews.end()) {
+			displaynews = displayNews.at(v[i].string_rate);
+			displayNews.erase(v[i].string_rate);
+		}
+		displaynews.push_back(v[i]); 
+		displayNews.insert(make_pair(v[i].string_rate, displaynews));
+		displaynews.clear();
+	}
+	vector<string> d;
+	if (msam.find(user) != msam.end()) {
+			d = msam.at(user);
+	}
+	map<string, vector<Details>>::iterator it;
+	vector<Details> a;
+	cout << "                                  ******* THE NEWS ******* \n";
+	for (it = --displayNews.end(); it != displayNews.begin(); it--)
+	{
+		a = it->second;
+		for (int i = 0; i < a.size(); i++) {
+			if (d.size() != 0 && find(d.begin(), d.end(), a[i].Title) != d.end()) {
+				continue;
+			}
+			else {
+				cout << "                                      " << a[i].Title << endl;
+				cout << "Date : " << a[i].Date << endl;
+				cout << "   " << a[i].Discrepition << endl;
+				cout << "Writen by :" << a[i].Writer << endl;
+				cout << "Rate :" << a[i].string_rate << endl;
+				cout << "The number of spam :" << a[i].spam << endl;
+				if (comments.find(a[i].Title) != comments.end()) {
+					vector<string> comment = comments.at(a[i].Title);
+					//if (comment[0] != "00") {
+					for (int j = 0; j < comment.size(); j += 2) {
+						if (j == 0)
+							cout << endl;
+						cout << "*********************************************** \n";
+						cout << comment[j] << endl << comment[j + 1] << endl;
+					}
+					//}
+					cout << endl;
+				}
+
+			}
+		}
+	}
+	a = it->second;
+	for (int i = 0; i < a.size(); i++) {
+		if (d.size() != 0 && find(d.begin(), d.end(), a[i].Title) != d.end()) {
 			continue;
-		}else{
-			cout << "                                      " << v[i].Title << endl;
-			cout << "Date : " << v[i].Date << endl;
-			cout << "   " << v[i].Discrepition << endl;
-			cout << "Writen by :" << v[i].Writer << endl;
-			cout << "Rate :" << v[i].string_rate << endl;
-			cout << "The number of spam :" << v[i].spam << endl;
-			if (comments.find(v[i].Title) != comments.end()) {
-				vector<string> comment = comments.at(v[i].Title);
+		}
+		else {
+			cout << "                                      " << a[i].Title << endl;
+			cout << "Date : " << a[i].Date << endl;
+			cout << "   " << a[i].Discrepition << endl;
+			cout << "Writen by :" << a[i].Writer << endl;
+			cout << "Rate :" << a[i].string_rate << endl;
+			cout << "The number of spam :" << a[i].spam << endl;
+			if (comments.find(a[i].Title) != comments.end()) {
+				vector<string> comment = comments.at(a[i].Title);
 				//if (comment[0] != "00") {
 				for (int j = 0; j < comment.size(); j += 2) {
 					if (j == 0)
@@ -424,8 +480,10 @@ void User::Display_Latest_News()
 				//}
 				cout << endl;
 			}
+
 		}
 	}
+
 	op();
 }
 
@@ -483,7 +541,7 @@ void User::Show()
 				cout << "This category hasn't news yet" << endl;
 				op();
 			}
-		}
+	}
 	else {
 		cout << "Wrong choose" << endl;
 		op();
@@ -493,49 +551,17 @@ void User::Show()
 
 //-----------------------------------------
 
-bool User::checkspam(string title) {
-	spamDetails spamdetails;
-	ifstream f1("spam.txt", ios::app);
-	while (getline(f1, spamdetails.use)) {
-		while (getline(f1, spamdetails.title))
-		{
-			if (spamdetails.title == "1")
-			{
-				break;
-			}
-			else
-			{
-				if (user == spamdetails.use) {
-					if (title == spamdetails.title) {
-						f1.close();
-						return false;
-					}
-				}
-				else
-				{
-					continue;
-				}
-			}
-		}
-
-
-	}
-
-	f1.close();
-	return true;
-}
-
 void User::Spam()
 {
 	cout << "please enter title " << endl;
 	getline(cin >> ws ,tit);
-	bool isSpamed = checkspam(tit);
+	
 	bool isFound = false;
 	ifstream f1("spam.txt", ios::app);
 	ofstream tempfile;
 	tempfile.open("tempfile.txt");
 	spamDetails spamdetails;
-	if (isSpamed) {
+	/*if (isSpamed) {*/
 		news.ChangeSpam(tit);
 		while (getline(f1, spamdetails.use)) {
 			tempfile << spamdetails.use << "\n";
@@ -568,12 +594,7 @@ void User::Spam()
 		cout << "Data is spammed .\n";
 		OptionSpam();
 
-	}
-	else
-	{
-		cout << "Sorry,You cannot spam again" << endl;
-		OptionSpam();
-	}
+	
 
 }
 
