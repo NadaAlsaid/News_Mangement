@@ -1,7 +1,6 @@
 #pragma once
 #include "News.h"
 #include "Admin.h"
-
 #include<iostream>
 #include<fstream>
 #include<string>
@@ -15,13 +14,13 @@ struct spamDetails {
 struct  Details;
 class User
 {
-	
+	vector<string> spamNews;
 	int choice;
 	float rate;
 	int count = 0;
 	unordered_map<string, vector<string> >  comments;
 	unordered_map<int, vector<Details>> specificNews;
-	unordered_map<string, vector<string>> mspam;
+	unordered_map<string, vector<string>> msam;
 	//map<string,map<string,vector<string> > m;
 public:
 	string tit;
@@ -42,5 +41,5 @@ public:
 	void OptionSpam();
 	void DisplayComment();
 	void op();
-	unordered_map<string, vector<string>> vspam();
+	unordered_map<string, vector<string>> pam();
 };
