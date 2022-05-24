@@ -6,7 +6,6 @@
 #include<fstream>
 #include<string>
 #include<vector>
-#include<list>
 #include <unordered_map>
 using namespace std;
 struct spamDetails {
@@ -22,6 +21,7 @@ class User
 	int count = 0;
 	unordered_map<string, vector<string> >  comments;
 	unordered_map<int, vector<Details>> specificNews;
+	unordered_map<string, vector<string>> mspam;
 	//map<string,map<string,vector<string> > m;
 public:
 	string tit;
@@ -42,4 +42,5 @@ public:
 	void OptionSpam();
 	void DisplayComment();
 	void op();
+	unordered_map<string, vector<string>> vspam();
 };
