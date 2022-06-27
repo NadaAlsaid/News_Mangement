@@ -1,6 +1,6 @@
 # News Mangement with c++ using oop and Data structure .
 
-##Features :
+## Features :
   ### -Login to an account(if it exists) or Register a new one.
   ### -Admin
       Post news to categories
