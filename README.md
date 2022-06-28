@@ -1,4 +1,4 @@
-# News Mangement with c++ using oop and Data structure .
+<h1 align="center"> News Mangement with c++ using oop and Data structure </h1>
 
 ## Features :
   ### -Login to an account(if it exists) or Register a new one.
