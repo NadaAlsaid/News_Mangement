@@ -12,3 +12,10 @@
       Each news has only one rate for each user 
       Spam News
       Comment on News  
+# Collaborators:
+- <a href="https://github.com/NadaAlsaid">Nada Alsaid</a><br>
+- <a href="https://github.com/Nada-Abdallah">Nada Abdallah</a><br>
+- <a href="https://github.com/Fatma-Salah-Saleh">Fatma Salah</a><br>
+- Nesma Farid
+- Bassant Mohamed
+<!-- - Abd-Elrahman -->
