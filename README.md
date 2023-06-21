@@ -1,6 +1,6 @@
 <h1 align="center"> News Mangement using oop and Data structure </h1>
 
-<h2> Features :</h2><br>
+ ## Features :
   ### - Login to an account(if it exists) or Register a new one.
   ### - Admin
       Post news to categories
